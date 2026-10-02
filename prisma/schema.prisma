@@ -21,10 +21,5 @@ model User {
   telephone String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  role      Role     @default(USER)
-}
-
-enum Role {
-  USER
-  ADMIN
+  role      String   @default("USER")
 }
