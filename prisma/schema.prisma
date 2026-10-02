@@ -3,12 +3,57 @@
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?
+  password  String
+  telephone String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  role      String   @default("USER")
+
+  // nuevos campos
+  tenantId Int
+  tenant   Tenant @relation(fields: [tenantId], references: [id])
+}
+
+// nuevo modelo 
+model Tenant {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  users     User[]
+}
+
+//nuevo modelo principal
+model PostCategory {
+  postId     Int
+  categoryId Int
+  post       Post     @relation(fields: [postId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  @@id([postId, categoryId])
+}
+
+//nuevo modelo 
+model Post {
+  id         Int            @id @default(autoincrement())
+  categories PostCategory[]
+}
+
+//nuevo modelo
+model Category {
+  id    Int            @id @default(autoincrement())
+  posts PostCategory[]
 }
